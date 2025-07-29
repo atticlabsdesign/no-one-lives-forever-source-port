@@ -5,10 +5,39 @@ project(NOLF CXX)
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
 ################################################################################
+# Set platform name automatically
 if(NOT CMAKE_VS_PLATFORM_NAME)
-    set(CMAKE_VS_PLATFORM_NAME "x64")
+    set(CMAKE_VS_PLATFORM_NAME "x86")
 endif()
-message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
+
+# Force 32-bit compilation on Unix/Linux systems
+if(UNIX AND NOT APPLE)
+    # Add -m32 flag for 32-bit compilation
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+    
+    message(STATUS "Auto-configured for 32-bit compilation with -m32 flags")
+endif()
+
+# For MinGW on Windows
+if(MINGW)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+    
+    message(STATUS "Auto-configured MinGW for 32-bit compilation")
+endif()
+
+message(STATUS "Platform: ${CMAKE_VS_PLATFORM_NAME}")
+message(STATUS "CXX Flags: ${CMAKE_CXX_FLAGS}")
+message(STATUS "C Flags: ${CMAKE_C_FLAGS}")
+message(STATUS "Linker Flags: ${CMAKE_EXE_LINKER_FLAGS}")
+
 
 if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86"))
     message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")

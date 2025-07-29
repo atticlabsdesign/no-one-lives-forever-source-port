@@ -433,16 +433,25 @@ set(Source__Interface
 )
 source_group("Source\\Interface" FILES ${Source__Interface})
 
-set(ALL_FILES
-    ${Headers}
-    ${Source}
-    ${Source__Interface}
-)
+function(add_sources_if_exist TARGET)
+    foreach(SOURCE_FILE ${ARGN})
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}")
+            target_sources(${TARGET} PRIVATE ${SOURCE_FILE})
+        else()
+            message(STATUS "Skipping missing file: ${SOURCE_FILE}")
+        endif()
+    endforeach()
+endfunction()
 
 ################################################################################
 # Target
 ################################################################################
-add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+add_library(${PROJECT_NAME} SHARED)
+
+# Add sources using the conditional function
+add_sources_if_exist(${PROJECT_NAME} ${Headers})
+add_sources_if_exist(${PROJECT_NAME} ${Source})
+add_sources_if_exist(${PROJECT_NAME} ${Source__Interface})
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/../Shared/Stdafx.h>"

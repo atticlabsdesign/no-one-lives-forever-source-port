@@ -457,21 +457,30 @@ set(Source_Files__Animation_Source_Files
 )
 source_group("Source Files\\Animation Source Files" FILES ${Source_Files__Animation_Source_Files})
 
-set(ALL_FILES
-    ${no_group_source_files}
-    ${Header_Files}
-    ${Header_Files__AI_Header_Files}
-    ${Header_Files__Animation_Header_Files}
-    ${SDK}
-    ${Source_Files}
-    ${Source_Files__AI_Source_Files}
-    ${Source_Files__Animation_Source_Files}
-)
+function(add_sources_if_exist TARGET)
+    foreach(SOURCE_FILE ${ARGN})
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}")
+            target_sources(${TARGET} PRIVATE ${SOURCE_FILE})
+        else()
+            message(STATUS "Skipping missing file: ${SOURCE_FILE}")
+        endif()
+    endforeach()
+endfunction()
 
 ################################################################################
 # Target
 ################################################################################
-add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+add_library(${PROJECT_NAME} SHARED)
+
+# Add sources using the conditional function
+add_sources_if_exist(${PROJECT_NAME} ${no_group_source_files})
+add_sources_if_exist(${PROJECT_NAME} ${Header_Files})
+add_sources_if_exist(${PROJECT_NAME} ${Header_Files__AI_Header_Files})
+add_sources_if_exist(${PROJECT_NAME} ${Header_Files__Animation_Header_Files})
+add_sources_if_exist(${PROJECT_NAME} ${SDK})
+add_sources_if_exist(${PROJECT_NAME} ${Source_Files})
+add_sources_if_exist(${PROJECT_NAME} ${Source_Files__AI_Source_Files})
+add_sources_if_exist(${PROJECT_NAME} ${Source_Files__Animation_Source_Files})
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/../Shared/Stdafx.h>"
