@@ -39,7 +39,7 @@ message(STATUS "C Flags: ${CMAKE_C_FLAGS}")
 message(STATUS "Linker Flags: ${CMAKE_EXE_LINKER_FLAGS}")
 
 
-if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86"))
+if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "win32"))
     message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")
 endif()
 

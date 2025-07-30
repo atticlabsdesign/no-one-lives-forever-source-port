@@ -3,7 +3,7 @@
 
 #include "limits.h"
 #include "float.h"
-#include "fstream.h"
+#include <fstream>
 #include "strstrea.h"
 #include "ztools.h"
 #include "..\cryptmgr\cryptmgr.h"
